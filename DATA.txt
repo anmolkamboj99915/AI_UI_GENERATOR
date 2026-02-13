@@ -85,3 +85,6 @@ install git system
         git commit -m "your message"
         git push
 
+    to fix any issues in render loading 
+        git log --oneline
+
