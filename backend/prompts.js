@@ -40,7 +40,10 @@ STRICT RULES:
 1. Output ONLY a function named GeneratedComponent.
 2. Do NOT use imports.
 3. Do NOT export anything.
-4. Do NOT use inline styles.
+4. NEVER use inline styles.
+   NEVER use style=.
+   NEVER use style={{}}.
+   If you need spacing, use nested <div> only.
 5. Do NOT use className.
 6. Do NOT create new components.
 7. Only use:

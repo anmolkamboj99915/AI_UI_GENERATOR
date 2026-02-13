@@ -46,7 +46,11 @@ export function validateGeneratedCode(code) {
     throw new Error("GeneratedComponent function missing");
   }
 
-  if (code.includes("<style") || code.includes("style=")) {
+  if (
+    code.includes("<style") ||
+    code.includes("style=") ||
+    code.includes("style={{")
+  ) {
     throw new Error("Inline styles not allowed");
   }
 
