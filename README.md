@@ -4,10 +4,10 @@
     Built as a Claude-Code–style UI system with safety, iteration awareness, and multi-provider LLM redundancy.
 
 🚀 Live Demo (Frontend)
-https://your-project-name.vercel.app
+https://ai-ui-generator-8giausn1l-anmolkamboj99915s-projects.vercel.app/
 
 🔗 API Base URL (Backend)
-https://your-render-service.onrender.com
+https://ai-ui-generator-backend-2wmm.onrender.com
 
 
 🎯 Assignment Goal

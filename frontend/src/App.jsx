@@ -14,18 +14,13 @@ function App() {
   const [versions, setVersions] = useState([]);
   const [messages, setMessages] = useState([]);
 
-
   useEffect(() => {
     fetchVersions().then(setVersions).catch(() => {});
   }, []);
 
   const handleGenerate = async (message) => {
     try {
-      const updatedMessages = [
-        ...messages, 
-        { role: "user", content: message }
-      ];
-      setMessages(updatedMessages);
+      setMessages((prev) => [...prev, { role: "user", content: message }]);
 
       const result = await generateUI({
         message,
@@ -36,16 +31,13 @@ function App() {
       setPlan(result.plan);
       setCode(result.code);
       setExplanation(result.explanation);
-      
-      //  assistant explanation to chat
+
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: result.explanation },
       ]);
 
-      // 🔥 Refresh from backend (source of truth)
       await fetchVersions().then(setVersions);
-
     } catch (error) {
       alert(error.message);
     }
@@ -63,36 +55,54 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-screen flex flex-col bg-gray-100">
       <Navbar />
 
-      <div className="flex flex-1 bg-gray-50">
-        <Sidebar />
+      <div className="flex flex-1 overflow-hidden">
 
-        <div className="w-1/3 p-4 border-r overflow-auto">
-          <ChatPanel 
-          messages={messages}
-          onUserMessage={handleGenerate} />
+        {/* Sidebar */}
+        <div className="w-56 border-r bg-white">
+          <Sidebar />
         </div>
 
-        <div className="w-2/3 p-4 space-y-4 overflow-auto">
-          <CodePanel code={code} onCodeChange={setCode} />
-          <Preview code={code} />
-          <ExplanationPanel explanation={explanation} />
+        {/* Chat */}
+        <div className="w-96 border-r bg-gray-50 flex flex-col">
+          <ChatPanel
+            messages={messages}
+            onUserMessage={handleGenerate}
+          />
+        </div>
 
-          <div className="bg-white p-4 rounded shadow">
-            <h3 className="font-semibold mb-2">Version History</h3>
+        {/* Main Workspace */}
+        <div className="flex-1 flex flex-col overflow-hidden p-4 space-y-4">
+          <div className="flex-1 overflow-auto">
+            <CodePanel code={code} onCodeChange={setCode} />
+          </div>
+
+          <div className="flex-1 overflow-auto">
+            <Preview code={code} />
+          </div>
+
+          <div className="flex-1 overflow-auto">
+            <ExplanationPanel explanation={explanation} />
+          </div>
+
+          <div className="bg-white p-3 rounded shadow-sm">
+            <h3 className="font-semibold mb-2 text-sm text-gray-600">
+              Version History
+            </h3>
             {versions.map((_, index) => (
               <button
                 key={index}
                 onClick={() => handleRollback(index)}
-                className="text-blue-600 text-sm mr-3"
+                className="text-blue-600 text-sm mr-3 hover:underline"
               >
                 Version {index + 1}
               </button>
             ))}
           </div>
         </div>
+
       </div>
     </div>
   );
