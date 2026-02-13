@@ -45,6 +45,9 @@ STRICT RULES:
 6. Do NOT create new components.
 7. Only use:
    Button, Card, Input, Table, Modal, Sidebar, Navbar, Chart.
+8. You may only use <div> as a native HTML element.
+9. You may NOT use <p>, <span>, <section>, or any other HTML tag.
+10. All content must be placed directly inside allowed components.
 
 MODES:
 

@@ -2,8 +2,9 @@ import express from "express";
 import { planWithAI } from "../agents/planner.js";
 import { generateCode } from "../agents/generator.js";
 import { explainCode } from "../agents/explainer.js";
-import { validateGeneratedCode, detectFullRewrite  } from "../validators/validate.js";
+import { validateGeneratedCode, detectFullRewrite, validatePlan } from "../validators/validate.js";
 import { getVersions, getVersion, saveVersion } from "../memory/versionStore.js";
+
 
 
 const router = express.Router();
@@ -39,9 +40,15 @@ router.post("/", async (req, res) => {
 
     // 1️⃣ Planner
     const plan = await planWithAI(message, previousPlan);
+    // Validate planner output
+    validatePlan(plan);
 
     // 2️⃣ Generator
-    const code = await generateCode(plan, isFullRegenerate ? null : previousCode, isFullRegenerate);
+    const code = await generateCode(
+      plan,
+      isFullRegenerate ? null : previousCode,
+      isFullRegenerate
+    );
 
     // 3️⃣ Validation
     validateGeneratedCode(code);
@@ -49,7 +56,6 @@ router.post("/", async (req, res) => {
     if (!isFullRegenerate && previousCode) {
       detectFullRewrite(previousCode, code);
     }
-
 
     // 4️⃣ Explainer
     const explanation = await explainCode(plan, code);
@@ -68,7 +74,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-
 // Get all versions
 router.get("/versions", (req, res) => {
   res.json(getVersions());
@@ -77,10 +82,11 @@ router.get("/versions", (req, res) => {
 // Rollback to version
 router.get("/versions/:index", (req, res) => {
   const index = parseInt(req.params.index);
+
   if (Number.isNaN(index)) {
     return res.status(400).json({ error: "Invalid version index" });
   }
-  
+
   const version = getVersion(index);
 
   if (!version) {

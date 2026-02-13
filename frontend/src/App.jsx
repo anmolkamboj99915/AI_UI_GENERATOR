@@ -12,6 +12,8 @@ function App() {
   const [plan, setPlan] = useState(null);
   const [explanation, setExplanation] = useState("");
   const [versions, setVersions] = useState([]);
+  const [messages, setMessages] = useState([]);
+
 
   useEffect(() => {
     fetchVersions().then(setVersions).catch(() => {});
@@ -19,6 +21,12 @@ function App() {
 
   const handleGenerate = async (message) => {
     try {
+      const updatedMessages = [
+        ...messages, 
+        { role: "user", content: message }
+      ];
+      setMessages(updatedMessages);
+
       const result = await generateUI({
         message,
         previousPlan: plan,
@@ -28,6 +36,12 @@ function App() {
       setPlan(result.plan);
       setCode(result.code);
       setExplanation(result.explanation);
+      
+      //  assistant explanation to chat
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: result.explanation },
+      ]);
 
       // 🔥 Refresh from backend (source of truth)
       await fetchVersions().then(setVersions);
@@ -56,7 +70,9 @@ function App() {
         <Sidebar />
 
         <div className="w-1/3 p-4 border-r overflow-auto">
-          <ChatPanel onUserMessage={handleGenerate} />
+          <ChatPanel 
+          messages={messages}
+          onUserMessage={handleGenerate} />
         </div>
 
         <div className="w-2/3 p-4 space-y-4 overflow-auto">
