@@ -82,16 +82,15 @@ export async function callLLM(messages, temperature = 0.3) {
   if (lowerPrompt.includes("generator")) {
     return `
 function GeneratedComponent() {
-  return (
-    <div>
-      <Card title="Fallback UI">
-        <Button label="Fallback Response" />
-      </Card>
-    </div>
+  return React.createElement(
+    "div",
+    null,
+    React.createElement(Card, { title: "Fallback UI" },
+      React.createElement(Button, { label: "Fallback Response" })
+    )
   );
 }
 `;
-  }
 
   // Explainer fallback
   return "Fallback explanation due to AI provider failure.";

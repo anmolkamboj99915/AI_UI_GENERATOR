@@ -85,6 +85,14 @@ install git system
         git commit -m "your message"
         git push
 
+    root level full synch 
+        git add -A
+        git commit -m "Full project sync"
+        git push origin main
+
+
+     
+
     to fix any issues in render loading 
         git log --oneline
 
