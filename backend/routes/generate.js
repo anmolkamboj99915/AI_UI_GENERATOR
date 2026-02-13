@@ -62,7 +62,12 @@ router.post("/", async (req, res) => {
 
     validateGeneratedCode(code);
 
-    if (!isFullRegenerate && previousCode) {
+    if (
+      !isFullRegenerate && 
+      previousCode &&
+      typeof previousCode === "string" &&
+      previousCode.trim() !== ""
+      ) {
       detectFullRewrite(previousCode, code);
     }
 
