@@ -20,7 +20,10 @@ export async function callLLM(messages, temperature = 0.3) {
       temperature,
     });
 
-    return response.choices[0].message.content;
+    return {
+      content: response.choices[0].message.content,
+      provider: "OpenAI"
+    };
 
   } catch (openaiError) {
     console.warn("⚠ OpenAI failed:", openaiError.message);
@@ -34,7 +37,10 @@ export async function callLLM(messages, temperature = 0.3) {
       temperature,
     });
 
-    return response.choices[0].message.content;
+    return {
+      content: response.choices[0].message.content,
+      provider: "Mistral"
+    };
 
   } catch (mistralError) {
     console.warn("⚠ Mistral direct failed:", mistralError.message);
@@ -57,7 +63,10 @@ export async function callLLM(messages, temperature = 0.3) {
       }
     );
 
-    return res.data.choices[0].message.content;
+    return {
+      content: res.data.choices[0].message.content,
+      provider: "OpenRouter"
+    };
 
   } catch (openrouterError) {
     console.warn("⚠ OpenRouter failed.");
@@ -70,17 +79,21 @@ export async function callLLM(messages, temperature = 0.3) {
 
   // Planner fallback
   if (lowerPrompt.includes("planner")) {
-    return JSON.stringify({
-      layout: "dashboard",
-      components: [
-        { type: "Card", props: { title: "Fallback Dashboard" } }
-      ]
-    });
+    return {
+      content: JSON.stringify({
+        layout: "dashboard",
+        components: [
+          { type: "Card", props: { title: "Fallback Dashboard" } }
+        ]
+      }),
+      provider: "Fallback"
+    };
   }
 
   // Generator fallback
   if (lowerPrompt.includes("generator")) {
-    return `
+    return {
+      content: `
 function GeneratedComponent() {
   return React.createElement(
     "div",
@@ -90,9 +103,14 @@ function GeneratedComponent() {
     )
   );
 }
-`;
+`,
+      provider: "Fallback"
+    };
   }
 
   // Explainer fallback
-  return "Fallback explanation due to AI provider failure.";
+  return {
+    content: "Fallback explanation due to AI provider failure.",
+    provider: "Fallback"
+  };
 }

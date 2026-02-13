@@ -49,8 +49,8 @@ function Preview({ code }) {
     } catch (error) {
       console.error("Preview error:", error);
       setRenderedComponent(() => () => (
-        <div className="text-red-600">
-          Invalid generated code.
+        <div className="p-4 text-sm text-red-600 bg-red-100 rounded">
+          Generated code is invalid or failed validation.
         </div>
       ));
     }

@@ -12,19 +12,19 @@ https://ai-ui-generator-backend-2wmm.onrender.com
 
 🎯 Assignment Goal
 
-Convert natural language UI descriptions into:
+   Convert natural language UI descriptions into:
 
-Working React UI code
+   Working React UI code
 
-Live rendered preview
+   Live rendered preview
 
-Clear explanation of decisions
+   Clear explanation of decisions
 
-Iterative modifications
+   Iterative modifications
 
-Rollback support
+   Rollback support
 
-While strictly enforcing a fixed deterministic component system.
+   While strictly enforcing a fixed deterministic component system.
 
 🏗 Architecture Overview
 Frontend

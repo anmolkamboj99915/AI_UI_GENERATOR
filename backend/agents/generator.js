@@ -26,9 +26,9 @@ ${previousCode || "None"}
     },
   ];
 
-  let code = await callLLM(messages, 0.2);
+  const result = await callLLM(messages, 0.2);
+  let code = result.content; // ✅ Extract content
 
-  // Remove markdown fences
   code = code
     .replace(/```[a-zA-Z]*\n?/g, "")
     .replace(/```/g, "")
@@ -38,5 +38,8 @@ ${previousCode || "None"}
     throw new Error("Invalid generator output");
   }
 
-  return code;
+  return {
+    code,
+    provider: result.provider // ✅ Pass provider upward
+  };
 }

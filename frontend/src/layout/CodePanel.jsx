@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Card from "../components/Card";
 
 function CodePanel({ code, onCodeChange }) {
   const [localCode, setLocalCode] = useState(code);
@@ -9,16 +8,21 @@ function CodePanel({ code, onCodeChange }) {
   }, [code]);
 
   return (
-    <Card title="Generated Code">
+    <div className="bg-[#1e1e1e] text-gray-200 rounded shadow h-full flex flex-col">
+      
+      <div className="px-4 py-2 border-b border-gray-700 text-sm text-gray-400">
+        Generated Code
+      </div>
+
       <textarea
-        className="w-full h-[400px] text-sm bg-gray-100 p-2 rounded"
+        className="flex-1 bg-[#1e1e1e] p-4 text-sm font-mono outline-none resize-none"
         value={localCode}
         onChange={(e) => {
           setLocalCode(e.target.value);
           onCodeChange(e.target.value);
         }}
       />
-    </Card>
+    </div>
   );
 }
 

@@ -19,16 +19,19 @@ ${JSON.stringify(previousPlan || {})}
     },
   ];
 
-  let raw = await callLLM(messages, 0.2);
+  const result = await callLLM(messages, 0.2);
+  let raw = result.content; // ✅ Extract content
 
-  // Remove markdown fences
   raw = raw
     .replace(/```json\n?/g, "")
     .replace(/```/g, "")
     .trim();
 
   try {
-    return JSON.parse(raw);
+    return {
+      plan: JSON.parse(raw),
+      provider: result.provider
+    };
   } catch {
     throw new Error("Planner returned invalid JSON");
   }

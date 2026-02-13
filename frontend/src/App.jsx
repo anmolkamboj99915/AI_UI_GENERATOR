@@ -13,12 +13,16 @@ function App() {
   const [explanation, setExplanation] = useState("");
   const [versions, setVersions] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [provider, setProvider] = useState(""); // ✅ Added
 
   useEffect(() => {
     fetchVersions().then(setVersions).catch(() => {});
   }, []);
 
   const handleGenerate = async (message) => {
+    setLoading(true);
+
     try {
       setMessages((prev) => [...prev, { role: "user", content: message }]);
 
@@ -31,6 +35,7 @@ function App() {
       setPlan(result.plan);
       setCode(result.code);
       setExplanation(result.explanation);
+      setProvider(result.provider); // ✅ Added
 
       setMessages((prev) => [
         ...prev,
@@ -40,6 +45,8 @@ function App() {
       await fetchVersions().then(setVersions);
     } catch (error) {
       alert(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,7 +63,7 @@ function App() {
 
   return (
     <div className="h-screen flex flex-col bg-gray-100">
-      <Navbar />
+      <Navbar provider={provider} /> {/* ✅ Updated */}
 
       <div className="flex flex-1 overflow-hidden">
 
@@ -66,7 +73,7 @@ function App() {
         </div>
 
         {/* Chat */}
-        <div className="w-96 border-r bg-gray-50 flex flex-col">
+        <div className="w-80 border-r bg-gray-50 flex flex-col">
           <ChatPanel
             messages={messages}
             onUserMessage={handleGenerate}
@@ -75,18 +82,34 @@ function App() {
 
         {/* Main Workspace */}
         <div className="flex-1 flex flex-col overflow-hidden p-4 space-y-4">
-          <div className="flex-1 overflow-auto">
-            <CodePanel code={code} onCodeChange={setCode} />
+
+          {loading && (
+            <div className="bg-white p-3 rounded shadow text-sm text-gray-600 animate-pulse">
+              AI is generating UI...
+            </div>
+          )}
+
+          <div className="flex-1 grid grid-cols-2 gap-4 overflow-hidden">
+
+            {/* Left: Code */}
+            <div className="overflow-auto">
+              <CodePanel code={code} onCodeChange={setCode} />
+            </div>
+
+            {/* Right: Preview + Explanation */}
+            <div className="flex flex-col gap-4 overflow-auto">
+              <div className="flex-1 overflow-auto">
+                <Preview code={code} />
+              </div>
+
+              <div className="flex-1 overflow-auto">
+                <ExplanationPanel explanation={explanation} />
+              </div>
+            </div>
+
           </div>
 
-          <div className="flex-1 overflow-auto">
-            <Preview code={code} />
-          </div>
-
-          <div className="flex-1 overflow-auto">
-            <ExplanationPanel explanation={explanation} />
-          </div>
-
+          {/* Version History */}
           <div className="bg-white p-3 rounded shadow-sm">
             <h3 className="font-semibold mb-2 text-sm text-gray-600">
               Version History
@@ -101,6 +124,7 @@ function App() {
               </button>
             ))}
           </div>
+
         </div>
 
       </div>

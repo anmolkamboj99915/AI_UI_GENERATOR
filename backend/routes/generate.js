@@ -2,10 +2,16 @@ import express from "express";
 import { planWithAI } from "../agents/planner.js";
 import { generateCode } from "../agents/generator.js";
 import { explainCode } from "../agents/explainer.js";
-import { validateGeneratedCode, detectFullRewrite, validatePlan } from "../validators/validate.js";
-import { getVersions, getVersion, saveVersion } from "../memory/versionStore.js";
-
-
+import {
+  validateGeneratedCode,
+  detectFullRewrite,
+  validatePlan
+} from "../validators/validate.js";
+import {
+  getVersions,
+  getVersion,
+  saveVersion
+} from "../memory/versionStore.js";
 
 const router = express.Router();
 
@@ -39,34 +45,40 @@ router.post("/", async (req, res) => {
     }
 
     // 1️⃣ Planner
-    const plan = await planWithAI(message, previousPlan);
-    // Validate planner output
+    const plannerResult = await planWithAI(message, previousPlan);
+    const plan = plannerResult.plan;
+    const provider = plannerResult.provider;
+
     validatePlan(plan);
 
     // 2️⃣ Generator
-    const code = await generateCode(
+    const generatorResult = await generateCode(
       plan,
       isFullRegenerate ? null : previousCode,
       isFullRegenerate
     );
 
-    // 3️⃣ Validation
+    const code = generatorResult.code;
+
     validateGeneratedCode(code);
 
     if (!isFullRegenerate && previousCode) {
       detectFullRewrite(previousCode, code);
     }
 
-    // 4️⃣ Explainer
-    const explanation = await explainCode(plan, code);
+    // 3️⃣ Explainer
+    const explainerResult = await explainCode(plan, code);
+    const explanation = explainerResult.explanation;
 
-    // 5️⃣ Save Version
+    // 4️⃣ Save Version
     saveVersion({ plan, code, explanation });
 
+    // 5️⃣ Send Response (Include Provider)
     res.json({
       plan,
       code,
       explanation,
+      provider // ✅ Send provider to frontend
     });
 
   } catch (error) {

@@ -19,13 +19,16 @@ ${code}
     },
   ];
 
-  let explanation = await callLLM(messages, 0.4);
+  const result = await callLLM(messages, 0.4);
+  let explanation = result.content; // ✅ Extract content
 
-  // Remove markdown fences
   explanation = explanation
     .replace(/```[a-zA-Z]*\n?/g, "")
     .replace(/```/g, "")
     .trim();
 
-  return explanation;
+  return {
+    explanation,
+    provider: result.provider // optional but consistent
+  };
 }
