@@ -8,6 +8,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Health check route for Render
+app.get("/", (req, res) => {
+  res.status(200).send("Backend is running");
+});
+
 app.use("/api/generate", generateRoute);
 
 const PORT = process.env.PORT || 5000;
