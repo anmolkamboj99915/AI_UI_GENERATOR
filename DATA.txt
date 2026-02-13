@@ -88,3 +88,10 @@ install git system
     to fix any issues in render loading 
         git log --oneline
 
+fallback system development 
+    npm install axios
+
+    install minstral -- 
+        npm install @mistralai/mistralai
+
+
