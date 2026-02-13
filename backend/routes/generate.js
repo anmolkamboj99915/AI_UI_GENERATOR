@@ -3,8 +3,7 @@ import { planWithAI } from "../agents/planner.js";
 import { generateCode } from "../agents/generator.js";
 import { explainCode } from "../agents/explainer.js";
 import { validateGeneratedCode, detectFullRewrite  } from "../validators/validate.js";
-import { saveVersion } from "../memory/versionStore.js";
-import { getVersions, getVersion } from "../memory/versionStore.js";
+import { getVersions, getVersion, saveVersion } from "../memory/versionStore.js";
 
 
 const router = express.Router();
@@ -47,7 +46,7 @@ router.post("/", async (req, res) => {
     // 3️⃣ Validation
     validateGeneratedCode(code);
 
-    if (!isFullRegenerate) {
+    if (!isFullRegenerate && previousCode) {
       detectFullRewrite(previousCode, code);
     }
 
@@ -77,7 +76,11 @@ router.get("/versions", (req, res) => {
 
 // Rollback to version
 router.get("/versions/:index", (req, res) => {
-  const index = parseInt(req.params.index, 10);
+  const index = parseInt(req.params.index);
+  if (Number.isNaN(index)) {
+    return res.status(400).json({ error: "Invalid version index" });
+  }
+  
   const version = getVersion(index);
 
   if (!version) {

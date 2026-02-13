@@ -69,3 +69,19 @@ install git system
     
     to check if anything is uploadd
         git status
+
+    
+    to finally set:
+        git init
+        git remote add origin https://github.com/anmolkamboj99915/AI_UI_GENERATOR.git
+        git add
+        git commit -m "Initial full-stack setup for AI_UI_GENERATOR"
+        git branch -M main
+        git pull origin main --allow-unrelated-histories
+        git add .
+        git commit -m "Resolved merge conflict"
+        git push -u origin main
+        git add .
+        git commit -m "your message"
+        git push
+
