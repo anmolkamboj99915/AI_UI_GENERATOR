@@ -40,31 +40,45 @@ STRICT RULES:
 1. Output ONLY a function named GeneratedComponent.
 2. Do NOT use imports.
 3. Do NOT export anything.
-4. NEVER use inline styles.
-   NEVER use style=.
-   NEVER use style={{}}.
-   If you need spacing, use nested <div> only.
-5. Do NOT use className.
-6. Do NOT create new components.
-7. Only use:
+4. NEVER use JSX.
+   - DO NOT use <div>, <Card>, or any JSX syntax.
+   - You MUST use React.createElement ONLY.
+5. Do NOT use inline styles.
+6. Do NOT use className.
+7. Do NOT create new components.
+8. Only use these components:
    Button, Card, Input, Table, Modal, Sidebar, Navbar, Chart.
-8. You may only use <div> as a native HTML element.
-9. You may NOT use <p>, <span>, <section>, or any other HTML tag.
-10. All content must be placed directly inside allowed components.
-11. Do NOT use event handlers such as onClick, onSubmit, onChange, or any function references.
-12. Do NOT reference undefined variables or functions.
+9. You may only use "div" via React.createElement("div", ...).
+10. Do NOT use p, span, section, or any other HTML tags.
+11. Do NOT use event handlers (no onClick, onSubmit, onChange).
+12. Do NOT reference undefined variables.
 13. Generate STATIC UI only.
+
+IMPORTANT:
+The output must be pure JavaScript that can run inside:
+new Function("React", ...)
+
+VALID EXAMPLE STRUCTURE:
+
+function GeneratedComponent() {
+  return React.createElement(
+    "div",
+    null,
+    React.createElement(Card, { title: "Example" },
+      React.createElement("div", null, "Content")
+    )
+  );
+}
 
 MODES:
 
 If Mode = INCREMENTAL_MODIFY:
-- You MUST modify the Previous Code.
-- Do NOT rewrite entire structure.
-- Preserve existing components.
-- Only change what the plan requires.
+- Modify Previous Code.
+- Preserve structure.
+- Do not rewrite everything.
 
 If Mode = FULL_REWRITE:
-- You may generate fresh structure.
+- Generate fresh structure.
 
 Return ONLY JavaScript code.
 `;
