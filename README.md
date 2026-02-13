@@ -1,304 +1,349 @@
-🧠 AI Agent → Deterministic UI Generator
-    An AI-powered multi-step agent that converts natural language UI intent into a working React UI with live preview — while enforcing strict determinism and component safety.
+# 🧠 AI UI Generator  
+**AI Agent → Deterministic UI Generator (Claude-Code Style)**
 
-    Built as a Claude-Code–style UI system with safety, iteration awareness, and multi-provider LLM redundancy.
+Deployed Frontend: https://ai-ui-generator-8giausn1l-anmolkamboj99915s-projects.vercel.app/
+Deployed Backend: https://ai-ui-generator-backend-2wmm.onrender.com
+---
+      
+      
+## 🎯 Overview
 
-🚀 Live Demo (Frontend)
-https://ai-ui-generator-8giausn1l-anmolkamboj99915s-projects.vercel.app/
+This project implements a deterministic AI-powered UI generation system.
 
-🔗 API Base URL (Backend)
-https://ai-ui-generator-backend-2wmm.onrender.com
+Users can:
 
+- Describe UI in natural language  
+- See working React UI rendered instantly  
+- Iteratively modify the UI via chat  
+- Understand why decisions were made  
+- Roll back to previous versions  
 
-🎯 Assignment Goal
+The system is built around a **strict deterministic component library** and a **multi-step AI agent pipeline** to ensure safety, reproducibility, and explainability.
 
-   Convert natural language UI descriptions into:
+---
 
-   Working React UI code
+# 🏗 Architecture
 
-   Live rendered preview
+The system follows a structured 3-agent pipeline:
 
-   Clear explanation of decisions
+```
+User Intent
+    ↓
+Planner Agent
+    ↓
+Generator Agent
+    ↓
+Explainer Agent
+    ↓
+Validated Output → Live Preview
+```
 
-   Iterative modifications
+---
 
-   Rollback support
+## 1️⃣ Planner Agent
 
-   While strictly enforcing a fixed deterministic component system.
+**Responsibility:**
 
-🏗 Architecture Overview
-Frontend
+- Interpret user intent  
+- Select layout type  
+- Select allowed components  
+- Output structured JSON plan  
 
-React + Vite
+### Example Output
 
-Tailwind (fixed component styling only)
-
-Claude-style layout:
-
-Left: Chat
-
-Right: Code editor + Preview + Explanation
-
-Version history panel
-
-Backend
-
-Node.js + Express
-
-Multi-step AI agent orchestration
-
-Agent Flow
-User Input
-   ↓
-Planner (Structured JSON Plan)
-   ↓
-Plan Validation
-   ↓
-Generator (Deterministic React Code)
-   ↓
-Code Validation + Rewrite Detection
-   ↓
-Explainer (Plain English reasoning)
-   ↓
-Version Store
-
-🧠 Multi-Step Agent Design
-1️⃣ Planner
-
-Interprets user intent
-
-Selects layout
-
-Chooses allowed components
-
-Outputs structured JSON
-
-Example output:
-
+```json
 {
   "layout": "dashboard",
   "components": [
-    { "type": "Card", "props": {} },
+    { "type": "Card", "props": { "title": "Revenue" } },
     { "type": "Chart", "props": {} }
   ]
 }
+```
 
-2️⃣ Generator
+Strict Rules:
 
-Converts structured plan → React function
+- Can only use whitelisted components  
+- Cannot create new components  
+- Returns valid JSON only  
 
-Must output function GeneratedComponent
+---
 
-No imports
+## 2️⃣ Generator Agent
 
-No exports
+**Responsibility:**
 
-No inline styles
+- Convert plan → deterministic React code  
+- Use only fixed component library  
+- Modify previous code incrementally  
+- Prevent full rewrites unless explicitly requested  
 
-No className usage
+### Constraints Enforced
 
-Only allowed components
+- No imports  
+- No exports  
+- No inline styles  
+- No className usage  
+- No arbitrary HTML tags  
+- No event handlers  
+- Static UI only  
+- Must return `function GeneratedComponent()`  
 
-Only <div> as native HTML element
+Generated code runs safely inside:
 
-3️⃣ Explainer
+```js
+new Function("React", ...)
+```
 
-Explains layout choice
+---
 
-Explains component selection
+## 3️⃣ Explainer Agent
 
-Explains modifications during incremental updates
+**Responsibility:**
 
-Plain English, no markdown
+- Explain layout decisions  
+- Explain component selection  
+- Describe incremental modifications  
+- Clarify what changed and why  
 
-🔒 Deterministic Component System (Core Constraint)
+Produces clear plain-English output.
 
-Allowed components:
+---
 
-Button
+# 🔒 Deterministic Component System
 
-Card
+The UI is built using a fixed component library.
 
-Input
+## Allowed Components
 
-Table
+- Button  
+- Card  
+- Input  
+- Table  
+- Modal  
+- Sidebar  
+- Navbar  
+- Chart  
 
-Modal
+## Hard Constraints
 
-Sidebar
+- No new components may be created by AI  
+- Component implementation never changes  
+- No inline styling  
+- No AI-generated Tailwind  
+- No external UI libraries  
 
-Navbar
+Validation is enforced before rendering.
 
-Chart
+---
 
-Strict enforcement:
+# 🔁 Iterative Editing & Rewrite Detection
 
-No new components
+The system supports incremental modification.
 
-No inline styles
+Example:
 
-No arbitrary HTML tags (only <div> allowed)
+> “Make this more minimal and add a settings modal.”
 
-No imports or exports
+The system:
 
-Component whitelist validation before render
+- Preserves structure  
+- Modifies only necessary sections  
+- Compares new vs previous code  
+- Blocks full rewrites unless explicitly requested  
 
-Validation occurs at two layers:
+Rewrite detection uses line similarity analysis.  
+If similarity < 40% → request rejected.
 
-Plan validation
+---
 
-Generated code validation
+# 🛡 Safety & Validation
 
-This guarantees visual and structural consistency.
+Multiple layers of protection are implemented:
 
-🔁 Iteration & Incremental Modification
+## 1. Component Whitelist Enforcement
 
-The system supports incremental edits.
+- Validates planner output  
+- Validates generated code  
 
-Behavior:
+## 2. Prompt Injection Protection
 
-Previous plan is passed to Planner
+Blocks phrases such as:
 
-Previous code is passed to Generator
+- "ignore previous instructions"  
+- "override system prompt"  
+- "act as root"  
 
-Rewrite detection prevents silent full rewrites
+## 3. Generated Code Validation
 
-Full rewrite allowed only when explicitly requested
+Prevents:
 
-Rewrite detection uses similarity ratio threshold to ensure structure preservation.
+- Inline styles  
+- className usage  
+- import/export statements  
+- Unauthorized components  
 
-🛡 Safety & Validation Layers
+## 4. Safe Rendering
 
-Prompt injection filtering
+Code runs in isolated function scope with controlled component injection.
 
-Plan schema validation
+## 5. Error Handling
 
-Component whitelist enforcement
+- Backend try/catch  
+- Validation errors surfaced  
+- React ErrorBoundary in frontend  
 
-Generated code validation
+---
 
-Full rewrite detection
+# 🖥 UI Structure (Claude-Style)
 
-Error boundary in frontend
+The application includes:
 
-Multi-provider LLM fallback chain
+- Left panel → AI chat  
+- Center → Generated code (editable)  
+- Live preview → Rendered UI  
+- Explanation panel  
+- Version history with rollback  
 
-🔄 Multi-Provider LLM Redundancy
+Live reload occurs immediately after generation.
 
-To guarantee availability, the system implements a fallback chain:
+---
 
-OpenAI (Primary)
+# 🗂 Versioning System
 
-Mistral (Direct API)
+Each generation stores:
 
-OpenRouter
+- Plan  
+- Code  
+- Explanation  
+- Timestamp  
 
-Deterministic role-aware fallback
+Users can:
 
-If all providers fail, the system still returns valid UI without breaking determinism.
+- View previous versions  
+- Roll back to any version  
 
-💾 Versioning System
+Storage is in-memory (acceptable per assignment constraints).
 
-In-memory version store
+---
 
-Every generation is saved
+# ⚙️ Tech Stack
 
-Users can rollback to previous versions
+## Frontend
 
-Enables reproducibility and debugging
+- React + Vite  
+- TailwindCSS  
+- ErrorBoundary for runtime protection  
 
-🧪 How to Run Locally
-Backend
+## Backend
+
+- Node.js + Express  
+- Multi-provider LLM service  
+- Validation middleware  
+
+## AI Providers
+
+- OpenAI (Primary)  
+- Mistral (Fallback)  
+- OpenRouter (Tertiary fallback)  
+
+---
+
+# 🚀 Setup Instructions
+
+## Backend
+
+```bash
 cd backend
 npm install
-npm start
+npm run dev
+```
 
-Frontend
+Create `.env` file:
+
+```
+OPENAI_API_KEY=your_key
+MISTRAL_API_KEY=your_key
+OPENROUTER_API_KEY=your_key
+```
+
+---
+
+## Frontend
+
+```bash
 cd frontend
 npm install
 npm run dev
+```
 
-⚠ Known Limitations
+Set environment variable:
 
-Version store is in-memory (resets on server restart)
+```
+VITE_API_URL=http://localhost:5000
+```
 
-Rewrite detection uses heuristic similarity (not AST-based)
+---
 
-Chart component uses mocked implementation
+# 📦 Deployment
 
-No persistent database
+Frontend deployed via Vercel  
+Backend deployed via Render  
 
-No streaming LLM responses
+Environment variables configured in hosting dashboards.
 
-🔮 Future Improvements
+---
 
-AST-based diff enforcement
+# 🧪 What This Demonstrates
 
-Persistent version storage (Redis / DB)
+- Explicit AI agent orchestration  
+- Deterministic UI generation  
+- Incremental reasoning  
+- Rewrite detection logic  
+- Safe dynamic execution  
+- Explainable AI decisions  
 
-Structured plan schema validation with Zod
+---
 
-Streaming responses
+# ⚠ Known Limitations
 
-Diff viewer between versions
+- In-memory version storage resets on server restart  
+- No diff viewer (optional bonus)  
+- No streaming responses  
+- Basic similarity rewrite detection (line-based)  
 
-Deterministic prop schema enforcement
+---
 
-Observability + provider health metrics
+# 🔮 Improvements With More Time
 
-🧠 What This Project Demonstrates
+- Persistent database versioning  
+- Visual diff viewer  
+- Structured component schema validation  
+- Replayable generation logs  
+- Streaming token rendering  
+- More advanced rewrite detection (AST-level comparison)  
 
-Multi-step AI agent orchestration
+---
 
-Deterministic code generation
+# 🎥 Demo Coverage
 
-Incremental reasoning enforcement
+The demo video includes:
 
-Safety-first AI design
+- Initial UI generation  
+- Iterative modification  
+- Live preview update  
+- Explanation output  
+- Version rollback  
 
-Multi-provider resilience
+---
 
-UI systems thinking
+# 🏁 Final Notes
 
-📌 Tech Stack
+This project prioritizes:
 
-Frontend:
+- Determinism over randomness  
+- Safety over flexibility  
+- Explainability over black-box generation  
+- Correctness over visual polish  
 
-React
-
-Vite
-
-Tailwind CSS
-
-Backend:
-
-Node.js
-
-Express
-
-AI Providers:
-
-OpenAI
-
-Mistral
-
-OpenRouter
-
-🎥 Demo Coverage
-
-The demo demonstrates:
-
-Initial UI generation
-
-Iterative modification via chat
-
-Live preview updates
-
-Explanation output
-
-Rollback to previous version
-
-👤 Author
-
-Anmol Kamboj
-AI Agent Architecture Implementation
+The goal is to build a trustworthy AI UI system — not just a UI generator.
