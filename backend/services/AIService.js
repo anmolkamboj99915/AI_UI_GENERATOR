@@ -91,6 +91,7 @@ function GeneratedComponent() {
   );
 }
 `;
+  }
 
   // Explainer fallback
   return "Fallback explanation due to AI provider failure.";

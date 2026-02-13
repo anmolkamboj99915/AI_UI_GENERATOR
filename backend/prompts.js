@@ -51,6 +51,9 @@ STRICT RULES:
 8. You may only use <div> as a native HTML element.
 9. You may NOT use <p>, <span>, <section>, or any other HTML tag.
 10. All content must be placed directly inside allowed components.
+11. Do NOT use event handlers such as onClick, onSubmit, onChange, or any function references.
+12. Do NOT reference undefined variables or functions.
+13. Generate STATIC UI only.
 
 MODES:
 
@@ -65,8 +68,6 @@ If Mode = FULL_REWRITE:
 
 Return ONLY JavaScript code.
 `;
-
-
 
 export const explainerPrompt = `
 You are a UI Explainer.
